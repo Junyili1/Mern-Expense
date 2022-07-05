@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const Expense = require("../models/expenseModel");
 
 //Gets Expenses
 //Route GET /api/expenses

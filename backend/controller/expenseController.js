@@ -1,36 +1,66 @@
 const asyncHandler = require("express-async-handler");
+
 const Expense = require("../models/expenseModel");
 
 //Gets Expenses
 //Route GET /api/expenses
-const getExpense = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Hello world" });
+const getExpenses = asyncHandler(async (req, res) => {
+  const expenses = await Expense.find();
+
+  res.status(200).json(expenses);
 });
 
 //Creates Expenses
 //Route CREATE /api/expenses
 const createExpense = asyncHandler(async (req, res) => {
-  res.status(201).json({ message: "Created Expense" });
+  if (!req.body.text) {
+    res.status(400);
+    throw new Error("Please add a text field");
+  }
+
+  const expense = await Expense.create({
+    text: req.body.text,
+  });
+
+  res.status(201).json(expense);
 });
 
 //Updates Expenses
 //Route /api/expenses/:id
 const updateExpense = asyncHandler(async (req, res) => {
-  if (!req.body.text) {
+  const expense = await Expense.findById(req.params.id);
+
+  if (!expense) {
     res.status(400);
-    throw new Error("Please add some text!");
+    throw new Error("Unable to find expense");
   }
-  res.status(200).json({ message: `Updated Expense ${req.params.id}` });
+
+  const updatedExpense = await Expense.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true }
+  );
+
+  res.status(200).json(updatedExpense);
 });
 
 //Deletes Expenses
 //Route /api/expenses/:id
 const deleteExpense = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: `Deleted Expense ${req.params.id}` });
+  const expense = await Expense.findById(req.params.id);
+
+  if (!expense) {
+    res.status(400);
+    throw new Error("Unable to find and delete expense");
+  }
+
+  await expense.remove();
+
+  res.status(200).json({ id: req.params.id });
 });
 
 module.exports = {
-  getExpense,
+  getExpenses,
   createExpense,
   updateExpense,
   deleteExpense,

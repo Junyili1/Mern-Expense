@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const expenseSchema = mongoose.Schema(
   {
     text: {
@@ -11,4 +12,4 @@ const expenseSchema = mongoose.Schema(
   }
 );
 
-module.export = mongoose.model("Expense", expenseSchema);
+module.exports = mongoose.model("Expense", expenseSchema);
